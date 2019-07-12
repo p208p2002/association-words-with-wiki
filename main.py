@@ -11,11 +11,11 @@ import json
 
 class KeyMatch():
     def __init__(self, key, jsonDataPath, filterFlags=[]):
-        self.key = key
-        self.jsonData = ''
-        self.jsonDataWithSplit = []
-        self.jsonDataPath = jsonDataPath
-        self.filterFlags = filterFlags
+        self.key = key # match 關鍵字
+        self.jsonDataPath = jsonDataPath # json檔案路徑
+        self.jsonData = '' # 原始json資料
+        self.jsonDataWithSplit = [] # 句子分割        
+        self.filterFlags = filterFlags # 詞性過濾黑名單
 
 
         # 加載字典
@@ -55,7 +55,7 @@ class KeyMatch():
         for i in range(len(jsonDataWithSplit)):
             seg_list = jieba.posseg.lcut(jsonDataWithSplit[i])
             segLists.append(seg_list)
-            # print(seg_list)        
+            # print(seg_list)     
 
         
 
