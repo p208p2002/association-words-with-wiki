@@ -54,15 +54,27 @@ class KeyMatch():
         segLists = []
         for i in range(len(jsonDataWithSplit)):
             seg_list = jieba.posseg.lcut(jsonDataWithSplit[i])
+
+            # 找到刪除目標
+            delTarget = []
+            for j in seg_list:
+                word, flag = j
+                if flag in filterFlags:
+                    delTarget.append(j)
+            
+            # 刪除
+            for j in delTarget:
+                seg_list.remove(j)
+                    
             segLists.append(seg_list)
-            # print(seg_list)     
+            print(seg_list) 
 
         
 
 
 
 if __name__ == "__main__":
-    BLACK_LIST_OF_FLAGS = ['c','e']
+    BLACK_LIST_OF_FLAGS = ['c','x']
     key = '數學'
     jsonFile = 'little.json'    
     km = KeyMatch(key,jsonFile,filterFlags = BLACK_LIST_OF_FLAGS)
