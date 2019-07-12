@@ -14,19 +14,26 @@ class KeyMatch():
         self.key = key # match 關鍵字
         self.jsonDataPath = jsonDataPath # json檔案路徑
         self.jsonData = '' # 原始json資料
-        self.jsonDataWithSplit = [] # 句子分割        
+        self.jsonDataWithSplit = [] # 句子分割
+        self.jsonDataAsWords = [] # 拆成單字且過濾後
         self.filterFlags = filterFlags # 詞性過濾黑名單
 
 
         # 加載字典
         jieba.initialize('dict/dict.txt.big')
         # jieba.load_userdict('dict/mydict')
-         
+            
+    def run(self):
+        # 加載wiki json
         self.__loadJson(self.jsonDataPath)
+        # 將文章分隔成句子
         self.__splitArticleAsSentence(self.jsonData)
+        # 將句子分割成單詞，並且過濾指定詞性
         self.__splitSentenceAsWords(self.jsonDataWithSplit, self.filterFlags)
-                
-    
+        # 開始匹配
+        self.__matchKey(self.key, self.jsonDataAsWords)
+
+                    
     def __loadJson(self, jsonDataPath):
         with open(jsonDataPath, 'r',encoding="utf-8") as f:
             data = json.load(f)
@@ -65,19 +72,39 @@ class KeyMatch():
             # 刪除
             for j in delTarget:
                 seg_list.remove(j)
-                    
+
+            # 存回陣列                                
             segLists.append(seg_list)
-            print(seg_list) 
+            self.jsonDataAsWords = segLists
+            # print(seg_list)
+    
+    def __matchKey(self, key, jsonDataAsWords):
+        print(key,jsonDataAsWords)
+
+        dataOnlyAsWordsWithoutFlags = []
+        for i in jsonDataAsWords:
+            onlyWords = []
+            for j in i:
+                w,f = j
+                onlyWords.append(w)
+            dataOnlyAsWordsWithoutFlags.append(onlyWords)
+        print(dataOnlyAsWordsWithoutFlags)
+            
+        
+
+        
+
 
         
 
 
 
 if __name__ == "__main__":
-    BLACK_LIST_OF_FLAGS = ['c','x']
+    BLACK_LIST_OF_FLAGS = []
     key = '數學'
     jsonFile = 'little.json'    
     km = KeyMatch(key,jsonFile,filterFlags = BLACK_LIST_OF_FLAGS)
+    km.run()
 
 
 
