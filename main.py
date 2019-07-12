@@ -49,6 +49,8 @@ class KeyMatch():
         data = jsonData        
         tmp = ''
         txtSplitAry = []
+        
+        index = 0
         for s in data['0']:
             if(s == '，' or s == '。'):
                 txtSplitAry.append(tmp)
