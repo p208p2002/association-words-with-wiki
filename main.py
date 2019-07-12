@@ -3,6 +3,7 @@ import jieba
 import jieba.posseg
 # import jieba.analyse
 import json
+from collections import Counter
 
 
 # print(data['0'])
@@ -17,11 +18,12 @@ class KeyMatch():
         self.jsonDataWithSplit = [] # 句子分割
         self.jsonDataAsWords = [] # 拆成單字且過濾後
         self.filterFlags = filterFlags # 詞性過濾黑名單
+        self.keyMatchRes = []
 
 
         # 加載字典
         jieba.initialize('dict/dict.txt.big')
-        # jieba.load_userdict('dict/mydict')
+        jieba.load_userdict('dict/mydict')
             
     def run(self):
         # 加載wiki json
@@ -32,6 +34,9 @@ class KeyMatch():
         self.__splitSentenceAsWords(self.jsonDataWithSplit, self.filterFlags)
         # 開始匹配
         self.__matchKey(self.key, self.jsonDataAsWords)
+    
+    def getTop(self,n):
+        return Counter(self.keyMatchRes).most_common(n)
 
                     
     def __loadJson(self, jsonDataPath):
@@ -81,30 +86,41 @@ class KeyMatch():
     def __matchKey(self, key, jsonDataAsWords):
         print(key,jsonDataAsWords)
 
-        dataOnlyAsWordsWithoutFlags = []
+        # 抽離詞性
+        dataOnlyAsWordsWithoutFlags = [] # 不含詞性的資料
         for i in jsonDataAsWords:
             onlyWords = []
             for j in i:
                 w,f = j
                 onlyWords.append(w)
             dataOnlyAsWordsWithoutFlags.append(onlyWords)
-        print(dataOnlyAsWordsWithoutFlags)
-            
+        # print(dataOnlyAsWordsWithoutFlags)
+
+        # 與關鍵字匹配
+        keyMatchRes = []
+        for words in dataOnlyAsWordsWithoutFlags:
+            if key in words:
+                for i in words:
+                    if i != key:
+                        keyMatchRes.append(i)
+            else:
+                continue
         
-
+        self.keyMatchRes = keyMatchRes
         
-
-
-        
-
-
 
 if __name__ == "__main__":
-    BLACK_LIST_OF_FLAGS = []
+    # 詞性 nu : no use
+    BLACK_LIST_OF_FLAGS = ['c','e','h','k','o','p','u','ud','ug','uj','ul','uv','uz','y','x','nu','z','zg','f','m']
     key = '數學'
     jsonFile = 'little.json'    
     km = KeyMatch(key,jsonFile,filterFlags = BLACK_LIST_OF_FLAGS)
     km.run()
+    print(km.getTop(10))
+
+    # print(jieba.posseg.lcut('如'))
+    # print(jieba.posseg.lcut('亦'))
+    # print(jieba.posseg.lcut('有著'))
 
 
 
