@@ -20,7 +20,6 @@ class KeyMatch():
         self.filterFlags = [] # 詞性過濾黑名單
         self.keyMatchRes = []
 
-
         # 加載字典
         jieba.initialize('dict/dict.txt.big')
         jieba.load_userdict('dict/mydict')
@@ -86,10 +85,9 @@ class KeyMatch():
         # 分詞&過濾詞性                
         segLists = []
         lenOfJsonDataWithSplit = len(jsonDataWithSplit)
-        for i in range(len(jsonDataWithSplit)):
-            print(i,lenOfJsonDataWithSplit)
-            # if(i % 10000 == 0):
-            #     print(i,lenOfJsonDataWithSplit)
+        for i in range(len(jsonDataWithSplit)):            
+            if(i % 10000 == 0):
+                print(i,lenOfJsonDataWithSplit)
             seg_list = jieba.posseg.lcut(jsonDataWithSplit[i])
 
             # 找到刪除目標
@@ -150,7 +148,7 @@ class KeyMatch():
 if __name__ == "__main__":
     # 詞性 nu : no use
     BLACK_LIST_OF_FLAGS = ['c','e','h','k','o','p','u','ud','ug','uj','ul','uv','uz','y','x','nu','z','zg','f','m']
-    key = '數學'
+    key = '周杰倫'
     jsonFile = 'wiki20180805_fullText.json'    
     km = KeyMatch(jsonDataPath = jsonFile)
     km.split(filterFlags = BLACK_LIST_OF_FLAGS)
