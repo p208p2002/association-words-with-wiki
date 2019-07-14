@@ -44,7 +44,7 @@ class KeyMatch():
         self.key = key
         # 開始匹配
         print('** 開始關鍵字匹配 **')
-        self.__matchKey(self.key, 'seg_lists')
+        self.__matchKey(self.key, 'splitdatas')
         print('** 完成 **')
     
     def getTop(self,n):
@@ -102,45 +102,68 @@ class KeyMatch():
             for j in delTarget:
                 seg_list.remove(j)
 
-            # 存回陣列                                
+            # 存回陣列                              
             segLists.append(seg_list)
 
             # 階段存檔
-            if((i!=0 and i %10000 ==0) or (i!=0 and i == lenOfJsonDataWithSplit-1)):
+            if((i!=0 and i %10000 ==0) or (i!=0 and i == lenOfJsonDataWithSplit-1)):                
+                # 抽離詞性
+                dataOnlyAsWordsWithoutFlags = [] # 不含詞性的資料
+                for k in segLists:            
+                    onlyWords = []
+                    for l in k:                
+                        w,f = l
+                        onlyWords.append(w)
+                    dataOnlyAsWordsWithoutFlags.append(onlyWords)
+                
+                # 
+                segLists = dataOnlyAsWordsWithoutFlags
+                del dataOnlyAsWordsWithoutFlags
+                
                 # 儲存存檔
                 segListsStr = str(segLists).replace('pair(','(')
                 with open('./splitdatas/seg_lists_'+str(fileSerialNumber), 'w', encoding='utf-8') as f:
                     f.write(segListsStr)
                 print('save:','seg_lists_'+str(fileSerialNumber),i)
+                
                 # release mem
+                del segLists
                 del segListsStr
-                segListsStr = []
+                segLists = []
                 fileSerialNumber += 1
-
-    
-    def __matchKey(self, key, dicPath):     
-        with open(dicPath, 'r',encoding="utf-8") as f:
-            data = f.read()        
-
-        # 將檔案資料讀入變數
-        _jsonDataAsWords = locals()
-        exec("jsonDataAsWords="+str(data), globals(), _jsonDataAsWords)
-        # print(_jsonDataAsWords['jsonDataAsWords'])        
-        jsonDataAsWords = _jsonDataAsWords['jsonDataAsWords']
         
-        # 抽離詞性
-        dataOnlyAsWordsWithoutFlags = [] # 不含詞性的資料
-        for i in jsonDataAsWords:            
-            onlyWords = []
-            for j in i:                
-                w,f = j
-                onlyWords.append(w)
-            dataOnlyAsWordsWithoutFlags.append(onlyWords)
-        # print(dataOnlyAsWordsWithoutFlags)
+        #
+        try:
+            del segLists
+            del segListsStr
+        except:
+            pass
+
+    def __matchKey(self, key, splitdatasDirPath):
+        
+        fileSN = 0
+        fileBaseName = 'seg_lists_'
+        fileRootPath = splitdatasDirPath
+        jsonDataAsWords = [] # 讀入的資料存檔
+        # 讀入存檔資料
+        while(True):            
+            try:
+                with open(splitdatasDirPath + '/' + fileBaseName + str(fileSN), 'r',encoding="utf-8") as f:
+                    data = f.read()
+                print('load:',fileSN)
+                fileSN += 1
+
+                # 將檔案資料讀入變數
+                _jsonDataAsWords = locals()
+                exec("jsonDataAsWords="+str(data), globals(), _jsonDataAsWords)
+                jsonDataAsWords = jsonDataAsWords + _jsonDataAsWords['jsonDataAsWords']
+
+            except:
+                break
 
         # 與關鍵字匹配
         keyMatchRes = []
-        for words in dataOnlyAsWordsWithoutFlags:
+        for words in jsonDataAsWords:
             if key in words:
                 for i in words:
                     if i != key:
@@ -154,12 +177,12 @@ class KeyMatch():
 if __name__ == "__main__":
     # 詞性 nu : no use
     BLACK_LIST_OF_FLAGS = ['c','e','h','k','o','p','u','ud','ug','uj','ul','uv','uz','y','x','nu','z','zg','f','m']
-    key = '周杰倫'
+    key = '數學'
     jsonFile = 'wiki20180805_fullText.json'    
     km = KeyMatch(jsonDataPath = jsonFile)
     km.split(filterFlags = BLACK_LIST_OF_FLAGS)
-    # km.match(key = key)
-    # print(km.getTop(20))
+    km.match(key = key)
+    print(km.getTop(10))
 
     # print(jieba.posseg.lcut('如'))
     # print(jieba.posseg.lcut('亦'))
