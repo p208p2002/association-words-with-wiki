@@ -11,13 +11,13 @@ from collections import Counter
 # print(txtSplitAry)
 
 class KeyMatch():
-    def __init__(self, key, jsonDataPath, filterFlags=[]):
-        self.key = key # match 關鍵字
+    def __init__(self, jsonDataPath):
+        self.key = '' # match 關鍵字
         self.jsonDataPath = jsonDataPath # json檔案路徑
         self.jsonData = '' # 原始json資料
         self.jsonDataWithSplit = [] # 句子分割
         self.jsonDataAsWords = [] # 拆成單字且過濾後
-        self.filterFlags = filterFlags # 詞性過濾黑名單
+        self.filterFlags = [] # 詞性過濾黑名單
         self.keyMatchRes = []
 
 
@@ -25,7 +25,9 @@ class KeyMatch():
         jieba.initialize('dict/dict.txt.big')
         jieba.load_userdict('dict/mydict')
             
-    def split(self):
+    def split(self, filterFlags=[]):
+        #
+        self.filterFlags = filterFlags
         # 加載wiki json
         print('** 加載 wiki json (1/3) **')
         self.__loadJson(self.jsonDataPath)
@@ -39,7 +41,8 @@ class KeyMatch():
         self.__splitSentenceAsWords(self.jsonDataWithSplit, self.filterFlags)
         print('** 完成 **')
 
-    def match(self):
+    def match(self, key=''):
+        self.key = key
         # 開始匹配
         print('** 開始關鍵字匹配 **')
         self.__matchKey(self.key, 'seg_lists')
@@ -74,8 +77,6 @@ class KeyMatch():
                     txtSplitAry.append(tmp)
                 index += 1
 
-                if(index == 2):
-                    break
             except:
                 break
         
@@ -86,8 +87,9 @@ class KeyMatch():
         segLists = []
         lenOfJsonDataWithSplit = len(jsonDataWithSplit)
         for i in range(len(jsonDataWithSplit)):
-            if(i % 10000 == 0):
-                print(i,lenOfJsonDataWithSplit)
+            print(i,lenOfJsonDataWithSplit)
+            # if(i % 10000 == 0):
+            #     print(i,lenOfJsonDataWithSplit)
             seg_list = jieba.posseg.lcut(jsonDataWithSplit[i])
 
             # 找到刪除目標
@@ -107,10 +109,10 @@ class KeyMatch():
             # print(seg_list)
             # print(self.jsonDataAsWords)
 
-            # 儲存存檔
-            segListsStr = str(segLists).replace('pair(','(')
-            with open('seg_lists', 'w', encoding='utf-8') as f:
-                f.write(segListsStr)
+        # 儲存存檔
+        segListsStr = str(segLists).replace('pair(','(')
+        with open('seg_lists', 'w', encoding='utf-8') as f:
+            f.write(segListsStr)
     
     def __matchKey(self, key, dicPath):     
         with open(dicPath, 'r',encoding="utf-8") as f:
@@ -119,7 +121,7 @@ class KeyMatch():
         # 將檔案資料讀入變數
         _jsonDataAsWords = locals()
         exec("jsonDataAsWords="+str(data), globals(), _jsonDataAsWords)
-        print(_jsonDataAsWords['jsonDataAsWords'])        
+        # print(_jsonDataAsWords['jsonDataAsWords'])        
         jsonDataAsWords = _jsonDataAsWords['jsonDataAsWords']
         
         # 抽離詞性
@@ -150,10 +152,10 @@ if __name__ == "__main__":
     BLACK_LIST_OF_FLAGS = ['c','e','h','k','o','p','u','ud','ug','uj','ul','uv','uz','y','x','nu','z','zg','f','m']
     key = '數學'
     jsonFile = 'wiki20180805_fullText.json'    
-    km = KeyMatch(key,jsonFile,filterFlags = BLACK_LIST_OF_FLAGS)
-    km.split()
-    km.match()
-    print(km.getTop(10))
+    km = KeyMatch(jsonDataPath = jsonFile)
+    km.split(filterFlags = BLACK_LIST_OF_FLAGS)
+    km.match(key = key)
+    print(km.getTop(20))
 
     # print(jieba.posseg.lcut('如'))
     # print(jieba.posseg.lcut('亦'))
