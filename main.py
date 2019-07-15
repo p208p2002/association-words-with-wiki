@@ -140,7 +140,6 @@ class KeyMatch():
             pass
 
     def __matchKey(self, key, splitdatasDirPath):
-        
         fileSN = 0
         fileBaseName = 'seg_lists_'
         fileRootPath = splitdatasDirPath
@@ -177,10 +176,10 @@ class KeyMatch():
 if __name__ == "__main__":
     # 詞性 nu : no use
     BLACK_LIST_OF_FLAGS = ['c','e','h','k','o','p','u','ud','ug','uj','ul','uv','uz','y','x','nu','z','zg','f','m']
-    key = '數學'
+    key = '本田'
     jsonFile = 'wiki20180805_fullText.json'    
     km = KeyMatch(jsonDataPath = jsonFile)
-    km.split(filterFlags = BLACK_LIST_OF_FLAGS)
+    # km.split(filterFlags = BLACK_LIST_OF_FLAGS)
     km.match(key = key)
     print(km.getTop(10))
 
