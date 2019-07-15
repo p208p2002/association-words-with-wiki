@@ -14,8 +14,9 @@ class KeyMatch():
         self.keyMatchRes = []
 
         # 加載字典
-        jieba.initialize('dict/dict.txt.big')
-        jieba.load_userdict('dict/mydict')
+        jieba.initialize('dict/dict.txt.big')        
+        jieba.load_userdict('dict/my_dict')
+        jieba.load_userdict('dict/no_use_words')     
             
     def split(self, jsonDataPath, filterFlags=[]):
         #
@@ -69,8 +70,6 @@ class KeyMatch():
                     txtSplitAry.append(tmp)
                 index += 1
 
-                if(index == 2):
-                    break
             except:
                 break
         
@@ -99,7 +98,7 @@ class KeyMatch():
             segLists.append(seg_list)
 
             # 階段存檔
-            if((i!=0 and i %100 ==0) or (i!=0 and i == lenOfJsonDataWithSplit-1)):                
+            if((i!=0 and i %10000 ==0) or (i!=0 and i == lenOfJsonDataWithSplit-1)):                
                 # 抽離詞性
                 dataOnlyAsWordsWithoutFlags = [] # 不含詞性的資料
                 for k in segLists:            
@@ -191,12 +190,13 @@ class KeyMatch():
 if __name__ == "__main__":
     # 詞性 nu : no use
     BLACK_LIST_OF_FLAGS = ['c','e','h','k','o','p','u','ud','ug','uj','ul','uv','uz','y','x','nu','z','zg','f','m']
-    key = '數學'
-    jsonFile = 'wikidata/wiki20180805_fullText.json'    
+    key = '哲學'
+    # jsonFile = 'wikidata/wiki20180805_fullText.json'
+    jsonFile = 'wikidata/wikidata_little.json'
     km = KeyMatch()
     km.split(jsonDataPath = jsonFile ,filterFlags = BLACK_LIST_OF_FLAGS)
     km.match(key = key)
-    print(km.getTop(10))
+    print(km.getTop(20))
 
     # print(jieba.posseg.lcut('如'))
     # print(jieba.posseg.lcut('亦'))
