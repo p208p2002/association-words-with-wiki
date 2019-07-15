@@ -34,7 +34,6 @@ class KeyMatch():
         print('** 合併存檔 **')
         self.__mergeSplitDatas()
 
-
     def match(self, key=''):        
         # 開始匹配
         print('** 開始關鍵字匹配 **')
@@ -43,8 +42,7 @@ class KeyMatch():
     
     def getTop(self,n):
         return Counter(self.keyMatchRes).most_common(n)
-
-                    
+  
     def __loadJson(self, jsonDataPath):
         with open(jsonDataPath, 'r',encoding="utf-8") as f:
             data = json.load(f)
@@ -190,7 +188,7 @@ class KeyMatch():
 if __name__ == "__main__":
     # 詞性 nu : no use
     BLACK_LIST_OF_FLAGS = ['c','e','h','k','o','p','u','ud','ug','uj','ul','uv','uz','y','x','nu','z','zg','f','m']
-    key = '哲學'
+    key = '周杰倫'
     # jsonFile = 'wikidata/wiki20180805_fullText.json'
     jsonFile = 'wikidata/wikidata_little.json'
     km = KeyMatch()
