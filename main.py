@@ -165,13 +165,26 @@ class KeyMatch():
         
 
 if __name__ == "__main__":
-    # 詞性 nu : no use
-    BLACK_LIST_OF_FLAGS = ['c','e','h','k','o','p','u','ud','ug','uj','ul','uv','uz','y','x','nu','z','zg','f','m']
+    # 詞性黑名單
+    with open('blacklists/flags.txt','r',encoding='utf-8') as f:
+        data = f.read()
+    blackFlags = data.split()
+
+    # 單詞黑名單
+    with open('blacklists/words.txt','r',encoding='utf-8') as f:
+        data = f.read()
+    blackWords = data.split()
+
+    # 配對關鍵字
     key = '數學'
+
+    # 維基資料
     # jsonFile = 'wikidata/wiki20180805_fullText.json'
     jsonFile = 'wikidata/wikidata_little.json'
+
+    # 
     km = KeyMatch()
-    # km.split(jsonDataPath = jsonFile ,filterFlags = BLACK_LIST_OF_FLAGS)
+    km.split(jsonDataPath = jsonFile ,filterFlags = blackFlags)
     km.match(key = key)
     print(km.getTop(20))
 
