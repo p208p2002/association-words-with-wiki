@@ -12,7 +12,6 @@ ul
 uv
 uz
 y
-x
 nu
 z
 zg
