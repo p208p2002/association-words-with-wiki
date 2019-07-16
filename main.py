@@ -31,8 +31,8 @@ class KeyMatch():
         print('** 開始分割句子成單詞 **')
         self.__splitSentenceAsWords(self.jsonDataWithSplit, self.filterFlags)
         # 合併存檔
-        print('** 合併存檔 **')
-        self.__mergeSplitDatas()
+        # print('** 合併存檔 **')
+        # self.__mergeSplitDatas()
 
     def match(self, key=''):        
         # 開始匹配
@@ -96,7 +96,7 @@ class KeyMatch():
             segLists.append(seg_list)
 
             # 階段存檔
-            if((i!=0 and i %10000 ==0) or (i!=0 and i == lenOfJsonDataWithSplit-1)):                
+            if((i!=0 and i %100 ==0) or (i!=0 and i == lenOfJsonDataWithSplit-1)):                
                 # 抽離詞性
                 dataOnlyAsWordsWithoutFlags = [] # 不含詞性的資料
                 for k in segLists:            
@@ -129,7 +129,36 @@ class KeyMatch():
         except:
             pass
     
-    def __mergeSplitDatas(self):
+    # def __mergeSplitDatas(self):
+        # fileSN = 0
+        # fileBaseName = 'seg_lists_'
+        # fileRootPath = 'splitdata'
+        # jsonDataAsWords = [] # 讀入的資料存檔
+        # # 讀入存檔資料
+        # while(True):            
+        #     try:
+        #         with open(fileRootPath + '/' + fileBaseName + str(fileSN), 'r',encoding="utf-8") as f:
+        #             data = f.read()
+        #         print('load:',fileSN)
+        #         fileSN += 1
+
+        #         # 將檔案資料讀入變數
+        #         _jsonDataAsWords = locals()
+        #         exec("jsonDataAsWords="+str(data), globals(), _jsonDataAsWords)
+        #         jsonDataAsWords = jsonDataAsWords + _jsonDataAsWords['jsonDataAsWords']
+
+        #         #刪除分割檔案
+        #         os.remove(fileRootPath + '/' + fileBaseName + str(fileSN-1))
+
+        #     except:
+        #         break
+        
+        # 合併
+        # with open('./splitdata/seg_lists', 'w', encoding='utf-8') as f:
+            # f.write(str(jsonDataAsWords))
+        # del jsonDataAsWords
+
+    def __matchKey(self, key):
         fileSN = 0
         fileBaseName = 'seg_lists_'
         fileRootPath = 'splitdata'
@@ -147,30 +176,8 @@ class KeyMatch():
                 exec("jsonDataAsWords="+str(data), globals(), _jsonDataAsWords)
                 jsonDataAsWords = jsonDataAsWords + _jsonDataAsWords['jsonDataAsWords']
 
-                #刪除分割檔案
-                os.remove(fileRootPath + '/' + fileBaseName + str(fileSN-1))
-
             except:
                 break
-        
-        # 合併
-        with open('./splitdata/seg_lists', 'w', encoding='utf-8') as f:
-            f.write(str(jsonDataAsWords))
-        del jsonDataAsWords
-
-    def __matchKey(self, key):
-        fileName = 'seg_lists'
-        fileRootPath = 'splitdata'
-        jsonDataAsWords = [] # 讀入的資料存檔
-        # 讀入檔案
-        with open(fileRootPath + '/' + fileName , 'r',encoding="utf-8") as f:
-            data = f.read()
-
-        # 將檔案資料讀入變數
-        _jsonDataAsWords = locals()
-        exec("jsonDataAsWords="+str(data), globals(), _jsonDataAsWords)
-        jsonDataAsWords = jsonDataAsWords + _jsonDataAsWords['jsonDataAsWords']
-        del data
 
         # 與關鍵字匹配
         keyMatchRes = []
@@ -181,6 +188,8 @@ class KeyMatch():
                         keyMatchRes.append(i)
             else:
                 continue
+        
+        print(Counter(keyMatchRes).most_common(20))
         
         # self.keyMatchRes = keyMatchRes
         #     return Counter(self.keyMatchRes).most_common(n)
