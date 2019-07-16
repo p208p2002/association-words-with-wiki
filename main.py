@@ -11,14 +11,13 @@ class KeyMatch():
         self.jsonData = '' # 原始json資料
         self.jsonDataWithSplit = [] # 句子分割        
         self.filterFlags = [] # 詞性過濾黑名單
-        # self.keyMatchRes = []
-
-        # 加載字典
-        jieba.initialize('dict/dict.txt.big')        
-        jieba.load_userdict('dict/my_dict')
-        jieba.load_userdict('dict/no_use_words')     
+        self.keyMatchRes = []
             
     def split(self, jsonDataPath, filterFlags=[]):
+        # 加載字典
+        jieba.initialize('dict/dict.txt.big')     
+        jieba.load_userdict('dict/my_dict')
+        jieba.load_userdict('dict/no_use_words')
         #
         self.filterFlags = filterFlags
         # 加載wiki json
@@ -128,35 +127,6 @@ class KeyMatch():
             del segListsStr
         except:
             pass
-    
-    # def __mergeSplitDatas(self):
-        # fileSN = 0
-        # fileBaseName = 'seg_lists_'
-        # fileRootPath = 'splitdata'
-        # jsonDataAsWords = [] # 讀入的資料存檔
-        # # 讀入存檔資料
-        # while(True):            
-        #     try:
-        #         with open(fileRootPath + '/' + fileBaseName + str(fileSN), 'r',encoding="utf-8") as f:
-        #             data = f.read()
-        #         print('load:',fileSN)
-        #         fileSN += 1
-
-        #         # 將檔案資料讀入變數
-        #         _jsonDataAsWords = locals()
-        #         exec("jsonDataAsWords="+str(data), globals(), _jsonDataAsWords)
-        #         jsonDataAsWords = jsonDataAsWords + _jsonDataAsWords['jsonDataAsWords']
-
-        #         #刪除分割檔案
-        #         os.remove(fileRootPath + '/' + fileBaseName + str(fileSN-1))
-
-        #     except:
-        #         break
-        
-        # 合併
-        # with open('./splitdata/seg_lists', 'w', encoding='utf-8') as f:
-            # f.write(str(jsonDataAsWords))
-        # del jsonDataAsWords
 
     def __matchKey(self, key):
         fileSN = 0
@@ -169,7 +139,7 @@ class KeyMatch():
             try:
                 with open(fileRootPath + '/' + fileBaseName + str(fileSN), 'r',encoding="utf-8") as f:
                     data = f.read()
-                print('load and process:',fileSN)
+                print('matching:',fileSN)
                 fileSN += 1
 
                 # 將檔案資料讀入變數
@@ -178,7 +148,7 @@ class KeyMatch():
                 jsonDataAsWords = _jsonDataAsWords['jsonDataAsWords']
                 del _jsonDataAsWords
                 
-                # 匹配關鍵字
+                # 匹配關鍵字                
                 for words in jsonDataAsWords:
                     if key in words:
                         for i in words:
@@ -186,7 +156,6 @@ class KeyMatch():
                                 keyMatchRes.append(i)
                     else:
                         continue
-                
                 del jsonDataAsWords                
 
             except:
@@ -198,7 +167,7 @@ class KeyMatch():
 if __name__ == "__main__":
     # 詞性 nu : no use
     BLACK_LIST_OF_FLAGS = ['c','e','h','k','o','p','u','ud','ug','uj','ul','uv','uz','y','x','nu','z','zg','f','m']
-    key = '汽車'
+    key = '數學'
     # jsonFile = 'wikidata/wiki20180805_fullText.json'
     jsonFile = 'wikidata/wikidata_little.json'
     km = KeyMatch()
