@@ -5,6 +5,7 @@ import jieba.posseg
 import json
 import os
 from collections import Counter
+import pickle
 
 class KeyMatch():
     def __init__(self):        
@@ -108,44 +109,46 @@ class KeyMatch():
                 segLists = dataOnlyAsWordsWithoutFlags
                 del dataOnlyAsWordsWithoutFlags
                 
-                # 儲存存檔
-                segListsStr = str(segLists).replace('pair(','(')
-                with open('./splitdata/seg_lists_'+str(fileSerialNumber), 'w', encoding='utf-8') as f:
-                    f.write(segListsStr)
-                print('save:','seg_lists_'+str(fileSerialNumber),i)
+                # 儲存存檔                
+                with open('./splitdata/seg_lists_'+str(fileSerialNumber)+'.pkl', 'wb') as f:
+                    pickle.dump(segLists, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+                print('save:','seg_lists_'+str(fileSerialNumber)+'.pkl',i)
                 
                 # release mem
-                del segLists
-                del segListsStr
+                del segLists                
                 segLists = []
                 fileSerialNumber += 1
         
         #
         try:
             del segLists
-            del segListsStr
         except:
             pass
 
     def __matchKey(self, key, blackWords=[]):
         fileSN = 0
+        totalFiles = 0
         fileBaseName = 'seg_lists_'
         fileRootPath = 'splitdata'
         jsonDataAsWords = [] # 讀入的資料存檔        
         keyMatchRes = [] # 與關鍵字匹配
+
+        # 檢測檔案數量
+        while(True):
+            if os.path.isfile(fileRootPath + '/' + fileBaseName+str(totalFiles) + '.pkl'):
+                totalFiles += 1
+            else:                
+                totalFiles -= 1                
+                break        
+
         # 讀入存檔資料
         while(True):            
             try:
-                with open(fileRootPath + '/' + fileBaseName + str(fileSN), 'r',encoding="utf-8") as f:
-                    data = f.read()
-                print('matching:',fileSN)
+                with open(fileRootPath + '/' + fileBaseName + str(fileSN) + '.pkl', 'rb') as f:
+                    jsonDataAsWords = pickle.load(f)
+                print('matching:',str(fileSN) + '/' + str(totalFiles))
                 fileSN += 1
-
-                # 將檔案資料讀入變數
-                _jsonDataAsWords = locals()
-                exec("jsonDataAsWords="+str(data), globals(), _jsonDataAsWords)
-                jsonDataAsWords = _jsonDataAsWords['jsonDataAsWords']
-                del _jsonDataAsWords
                 
                 # 匹配關鍵字                
                 for words in jsonDataAsWords:
@@ -157,7 +160,7 @@ class KeyMatch():
                         continue
                 del jsonDataAsWords                
 
-            except:
+            except:                
                 break
         
         self.keyMatchRes = keyMatchRes
@@ -178,14 +181,14 @@ if __name__ == "__main__":
     key = '數學'
 
     # 維基資料
-    # jsonFile = 'wikidata/wiki20180805_fullText.json'
-    jsonFile = 'wikidata/wikidata_little.json'
+    jsonFile = 'wikidata/wiki20180805_fullText.json'
+    # jsonFile = 'wikidata/wikidata_little.json'
 
     # 
     km = KeyMatch()
-    km.split(jsonDataPath = jsonFile ,blackFlags = blackFlags)
+    # km.split(jsonDataPath = jsonFile ,blackFlags = blackFlags)
     km.match(key = key, blackWords = blackWords)
-    print(km.getTop(40))
+    print(km.getTop(10))
 
     # print(jieba.posseg.lcut('亦'))
     # print(jieba.posseg.lcut('有著'))
