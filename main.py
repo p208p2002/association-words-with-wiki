@@ -31,10 +31,10 @@ class KeyMatch():
         print('** 開始分割句子成單詞 **')
         self.__splitSentenceAsWords(self.jsonDataWithSplit, self.blackFlags)
 
-    def match(self, key='', blackWords=[]):        
+    def match(self, key='', blackWords=[], subDir= ''):
         # 開始匹配
         print('** 開始關鍵字匹配 **')
-        self.__matchKey(key, blackWords)
+        self.__matchKey(key, blackWords, subDir)
         print('** 完成 **')
     
     def getTop(self,n):
@@ -57,6 +57,7 @@ class KeyMatch():
                 for s in data[str(index)]:
                     if(s == '，' or s == '。'):
                         tmp = tmp.replace('\n','')
+                        tmp = tmp.replace(' ','')
                         txtSplitAry.append(tmp)
                         tmp = ''
                     else:
@@ -126,11 +127,11 @@ class KeyMatch():
         except:
             pass
 
-    def __matchKey(self, key, blackWords=[]):
+    def __matchKey(self, key, blackWords=[], subDir= ''):
         fileSN = 0
         totalFiles = 0
         fileBaseName = 'seg_lists_'
-        fileRootPath = 'splitdata'
+        fileRootPath = 'splitdata/' + subDir 
         jsonDataAsWords = [] # 讀入的資料存檔        
         keyMatchRes = [] # 與關鍵字匹配
 
@@ -154,7 +155,7 @@ class KeyMatch():
                 for words in jsonDataAsWords:
                     if key in words:
                         for i in words:
-                            if (i != key) and (not i in blackWords):
+                            if (i != key) and (not i in blackWords) and i != ' ':
                                 keyMatchRes.append(i)
                     else:
                         continue
@@ -181,13 +182,14 @@ if __name__ == "__main__":
     key = '數學'
 
     # 維基資料
-    jsonFile = 'wikidata/wiki20180805_fullText.json'
-    # jsonFile = 'wikidata/wikidata_little.json'
+    # jsonFile = 'wikidata/wiki20180805_fullText.json'
+    jsonFile = 'wikidata/wikidata_little.json'
 
     # 
     km = KeyMatch()
     # km.split(jsonDataPath = jsonFile ,blackFlags = blackFlags)
-    km.match(key = key, blackWords = blackWords)
+    # km.match(key = key, blackWords = blackWords)
+    km.match(key = key, blackWords = blackWords, subDir = 'full')
     print(km.getTop(10))
 
     # print(jieba.posseg.lcut('亦'))
