@@ -184,7 +184,7 @@ if __name__ == "__main__":
     blackWords = blackWords + data
 
     # 配對關鍵字
-    key = '數學'
+    key = '豐田'
 
     # 維基資料
     # jsonFile = 'wikidata/wiki20180805_fullText.json'
@@ -195,4 +195,4 @@ if __name__ == "__main__":
     # km.split(jsonDataPath = jsonFile ,blackFlags = blackFlags)
     # km.match(key = key, blackWords = blackWords)
     km.match(key = key, blackWords = blackWords, subDir = 'full')
-    print(km.getTop(10))
+    print(km.getTop(40))
