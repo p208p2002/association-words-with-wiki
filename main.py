@@ -168,15 +168,20 @@ class KeyMatch():
         
 
 if __name__ == "__main__":
-    # 詞性黑名單
+    # 自訂詞性黑名單
     with open('blacklists/flags.txt','r',encoding='utf-8') as f:
         data = f.read()
     blackFlags = data.split()
 
-    # 單詞黑名單
+    # 自訂單詞黑名單
     with open('blacklists/words.txt','r',encoding='utf-8') as f:
         data = f.read()
     blackWords = data.split()
+
+    # 單詞黑名單字典
+    with open('blacklists/words.pkl', 'rb') as f:
+        data = list(pickle.load(f))
+    blackWords = blackWords + data
 
     # 配對關鍵字
     key = '數學'
@@ -191,14 +196,3 @@ if __name__ == "__main__":
     # km.match(key = key, blackWords = blackWords)
     km.match(key = key, blackWords = blackWords, subDir = 'full')
     print(km.getTop(10))
-
-    # print(jieba.posseg.lcut('亦'))
-    # print(jieba.posseg.lcut('有著'))
-
-
-
-
-# print(segLists)
-
-# res = jieba.analyse.extract_tags(string, topK=20, withWeight=True, allowPOS=('n','nr','ns','nsf','nt','nz','nl','ng'))
-# print(res)
