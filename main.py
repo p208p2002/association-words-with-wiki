@@ -187,8 +187,8 @@ if __name__ == "__main__":
     key = '周杰倫'
 
     # 維基資料
-    # jsonFile = 'wikidata/wiki20180805_fullText.json'
-    jsonFile = 'wikidata/wikidata_little.json'
+    jsonFile = 'wikidata/wiki20180805_fullText.json'
+    # jsonFile = 'wikidata/wikidata_little.json'
 
     # 
     km = KeyMatch()
