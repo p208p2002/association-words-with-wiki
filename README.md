@@ -6,7 +6,7 @@
 > [維基資料包下載](https://github.com/p208p2002/key-match-with-wiki/releases/tag/0.0.1)
 - 切割檔案，進行預處理
 
-`km.split(jsonDataPath = jsonFile ,blackFlags = blackFlags)`
+`km.split(jsonDataPath = jsonFile, blackFlags = blackFlags)`
 
 - 進行關鍵字配對
 
