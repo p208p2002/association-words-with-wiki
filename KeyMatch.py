@@ -133,7 +133,7 @@ class KeyMatch():
         fileBaseName = 'seg_lists_'
         fileRootPath = 'splitdata/' + subDir 
         jsonDataAsWords = [] # 讀入的資料存檔        
-        keyMatchRes = [] # 與關鍵字匹配
+        keyMatchRes = {} # 與關鍵字匹配
 
         # 檢測檔案數量
         while(True):
@@ -156,7 +156,12 @@ class KeyMatch():
                     if key in words:
                         for i in words:
                             if (i != key) and (not i in blackWords) and i != ' ':
-                                keyMatchRes.append(i)
+                                keyVal = keyMatchRes.get(i)
+                                if(keyVal == None):
+                                    keyMatchRes[i] = 1
+                                else:
+                                    keyVal += 1
+                                    keyMatchRes[i] = keyVal
                     else:
                         continue
                 del jsonDataAsWords                
